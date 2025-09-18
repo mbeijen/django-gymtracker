@@ -52,7 +52,7 @@ This app aims to replace my current Apple Notes system with a more structured an
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.13+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended) or pip
 
 ### Installation

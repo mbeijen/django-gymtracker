@@ -3,17 +3,12 @@ name = "django-gymtracker"
 version = "0.1.0"
 description = "A Django web application for tracking gym workouts and exercise progress"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "django>=5.2.6",
     "django-allauth>=65.11.2",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-django>=4.0.0",
-]
 
 [build-system]
 requires = ["hatchling"]
