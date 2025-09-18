@@ -96,8 +96,10 @@ This app aims to replace my current Apple Notes system with a more structured an
    uv run python manage.py runserver
    ```
 
+   The server will start on port 8098 by default.
+
 6. **Access the application**
-   - Open your browser and go to `http://127.0.0.1:8000/`
+   - Open your browser and go to `http://127.0.0.1:8098/`
    - Login with one of the test accounts or create your own
 
 ## Development Login
@@ -140,6 +142,38 @@ The app follows Django best practices with:
 - Admin interface for data management
 - Modern Python packaging with `pyproject.toml`
 - Fast dependency management with `uv`
+
+## Email Configuration
+
+The app is configured to work with Mailpit for local development and supports production email providers via environment variables.
+
+### Local Development (Mailpit)
+
+For local development, the app is pre-configured to use Mailpit on `localhost:1025`. Just start Mailpit and the app will automatically use it for sending emails.
+
+### Production Deployment
+
+For production deployment, create a `.env` file in your home directory (`~/.env`) with your email provider settings:
+
+```bash
+# Copy the example file
+cp env.example ~/.env
+
+# Edit with your email provider settings
+nano ~/.env
+```
+
+Example configuration for Gmail:
+
+```env
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=your-email@gmail.com
+```
 
 ### Management Commands
 
