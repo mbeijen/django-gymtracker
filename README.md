@@ -41,10 +41,91 @@ This app aims to replace my current Apple Notes system with a more structured an
 
 ## Technical Stack
 
-- **Backend**: Django (latest version)
+- **Backend**: Django 5.2.6
 - **Database**: SQLite
 - **Authentication**: django-allauth for user registration and login
 - **Frontend**: Django templates with HTMX for dynamic interactions
-- **Styling**: Lightweight CSS/JS framework (to be determined)
+- **Styling**: Bootstrap 5.3 for mobile-first responsive design
 - **Best Practices**: Following Django conventions and recommended modules
-- **Unit Tests**: we should have unit tests for all paths and functions to be sure we can refactor without breaking stuff
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.8+
+- pip
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd django-gymtracker
+   ```
+
+2. **Create and activate virtual environment**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run migrations**
+
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Create a superuser (optional)**
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. **Start the development server**
+
+   ```bash
+   python manage.py runserver
+   ```
+
+7. **Access the application**
+   - Open your browser and go to `http://127.0.0.1:8000/`
+   - Create an account or login
+   - Start tracking your workouts!
+
+## Features Implemented
+
+✅ **User Authentication**: Email-based login and registration
+✅ **Workout Sessions**: Create, manage, and complete workout sessions
+✅ **Exercise Tracking**: Add exercises with weight, reps, sets, and difficulty rating
+✅ **Exercise Library**: Pre-populated with common gym exercises
+✅ **Weight Recommendations**: Smart suggestions based on previous performance
+✅ **Mobile-First Design**: Optimized for mobile browsers
+✅ **Workout History**: View and filter past workout sessions
+✅ **Admin Interface**: Manage exercises and view user data
+✅ **Responsive UI**: Works great on both mobile and desktop
+
+## Usage
+
+1. **Create Account**: Sign up with your email address
+2. **Start Workout**: Click "Start New Workout" from the dashboard
+3. **Add Exercises**: Select exercises and record your performance
+4. **Track Progress**: View your workout history and progress over time
+5. **Get Recommendations**: The app suggests weights based on your previous performance
+
+## Development
+
+The app follows Django best practices with:
+
+- Clean separation of concerns (models, views, templates)
+- Mobile-first responsive design
+- HTMX for dynamic interactions without heavy JavaScript
+- Comprehensive forms with validation
+- Admin interface for data management
