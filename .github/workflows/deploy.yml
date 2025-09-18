@@ -20,24 +20,24 @@ jobs:
 
       - name: Stop gymtracker service
         run: |
-          sudo -u gymtracker systemctl --user stop gymtracker || echo "Service not running"
+          systemctl --user stop gymtracker || echo "Service not running"
 
       - name: Backup database
         run: |
           # Create backup directory if it doesn't exist
-          sudo -u gymtracker mkdir -p /srv/gymtracker/backups
+          mkdir -p /srv/gymtracker/backups
           # Backup current database if it exists
           if [ -f /srv/gymtracker/data/db.sqlite3 ]; then
-            sudo -u gymtracker cp /srv/gymtracker/data/db.sqlite3 /srv/gymtracker/backups/db.sqlite3.backup.$(date +%Y%m%d_%H%M%S)
+            cp /srv/gymtracker/data/db.sqlite3 /srv/gymtracker/backups/db.sqlite3.backup.$(date +%Y%m%d_%H%M%S)
             echo "Database backed up"
           fi
 
       - name: Deploy files
         run: |
           # Create deployment directory if it doesn't exist
-          sudo -u gymtracker mkdir -p /srv/gymtracker/app
+          mkdir -p /srv/gymtracker/app
           # Sync files excluding database and sensitive files
-          sudo -u gymtracker rsync -av --delete \
+          rsync -av --delete \
             --exclude='db.sqlite3' \
             --exclude='data/' \
             --exclude='.git' \
@@ -51,27 +51,27 @@ jobs:
       - name: Install dependencies
         run: |
           cd /srv/gymtracker/app
-          sudo -u gymtracker uv sync
+          uv sync
 
       - name: Run migrations
         run: |
           cd /srv/gymtracker/app
-          sudo -u gymtracker uv run python manage.py migrate
+          uv run python manage.py migrate
 
       - name: Collect static files
         run: |
           cd /srv/gymtracker/app
-          sudo -u gymtracker uv run python manage.py collectstatic --noinput
+          uv run python manage.py collectstatic --noinput
 
       - name: Start gymtracker service
         run: |
-          sudo -u gymtracker systemctl --user start gymtracker
+          systemctl --user start gymtracker
 
       - name: Verify deployment
         run: |
           echo "✅ Deployment completed successfully"
           echo "Service status:"
-          sudo -u gymtracker systemctl --user status gymtracker --no-pager
+          systemctl --user status gymtracker --no-pager
           echo ""
           echo "Files in deployment directory:"
           ls -la /srv/gymtracker/app/

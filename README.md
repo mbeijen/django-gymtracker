@@ -255,7 +255,7 @@ The app uses GitHub Actions for automated deployment:
 1. **Stop the service**:
 
    ```bash
-   sudo -u gymtracker systemctl --user stop gymtracker
+   systemctl --user stop gymtracker
    ```
 
 2. **Deploy files**:
@@ -268,29 +268,29 @@ The app uses GitHub Actions for automated deployment:
 
    ```bash
    cd /srv/gymtracker/app
-   sudo -u gymtracker uv sync
-   sudo -u gymtracker uv run python manage.py migrate
-   sudo -u gymtracker uv run python manage.py collectstatic --noinput
+   uv sync
+   uv run python manage.py migrate
+   uv run python manage.py collectstatic --noinput
    ```
 
 4. **Start the service**:
    ```bash
-   sudo -u gymtracker systemctl --user start gymtracker
+   systemctl --user start gymtracker
    ```
 
 **Service Management:**
 
 ```bash
 # Check service status
-sudo -u gymtracker systemctl --user status gymtracker
+systemctl --user status gymtracker
 
 # Start/stop/restart service
-sudo -u gymtracker systemctl --user start gymtracker
-sudo -u gymtracker systemctl --user stop gymtracker
-sudo -u gymtracker systemctl --user restart gymtracker
+systemctl --user start gymtracker
+systemctl --user stop gymtracker
+systemctl --user restart gymtracker
 
 # View logs
-sudo -u gymtracker journalctl --user -u gymtracker -f
+journalctl --user -u gymtracker -f
 ```
 
 ### Management Commands
