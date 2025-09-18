@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Exercise - Gym Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Edit Exercise</h4>
+                <small class="text-muted">{{ object.exercise.name }} - {{ object.workout_session.date|date:"M d, Y" }}</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.exercise.id_for_label }}" class="form-label">{{ form.exercise.label }}</label>
+                        {{ form.exercise }}
+                        {% if form.exercise.errors %}
+                            <div class="text-danger">
+                                {% for error in form.exercise.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.weight_kg.id_for_label }}" class="form-label">{{ form.weight_kg.label }}</label>
+                            {{ form.weight_kg }}
+                            {% if form.weight_kg.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.weight_kg.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.reps.id_for_label }}" class="form-label">{{ form.reps.label }}</label>
+                            {{ form.reps }}
+                            {% if form.reps.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.reps.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.sets.id_for_label }}" class="form-label">{{ form.sets.label }}</label>
+                            {{ form.sets }}
+                            {% if form.sets.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.sets.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.difficulty_rating.id_for_label }}" class="form-label">{{ form.difficulty_rating.label }}</label>
+                            {{ form.difficulty_rating }}
+                            {% if form.difficulty_rating.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.difficulty_rating.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if form.difficulty_rating.help_text %}
+                                <small class="form-text text-muted">{{ form.difficulty_rating.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="text-danger">
+                                {% for error in form.notes.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Update Exercise
+                        </button>
+                        <a href="{% url 'workouts:workout_detail' object.workout_session.pk %}" class="btn btn-outline-secondary">
+                            Back to Workout
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

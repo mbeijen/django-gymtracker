@@ -113,9 +113,11 @@ class AddExerciseToWorkoutView(LoginRequiredMixin, CreateView):
     template_name = "workouts/add_exercise.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.workout = get_object_or_404(
-            WorkoutSession, pk=kwargs["pk"], user=request.user
-        )
+        # Only get workout if user is authenticated
+        if request.user.is_authenticated:
+            self.workout = get_object_or_404(
+                WorkoutSession, pk=kwargs["pk"], user=request.user
+            )
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
