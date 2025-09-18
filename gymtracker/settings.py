@@ -144,6 +144,12 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # For development
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+# Custom allauth forms
+ACCOUNT_FORMS = {
+    "login": "workouts.forms.CustomLoginForm",
+    "signup": "workouts.forms.CustomSignupForm",
+}
+
 # Static files configuration
 STATICFILES_DIRS = [
     BASE_DIR / "static",

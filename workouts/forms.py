@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from allauth.account.forms import LoginForm, SignupForm
 from .models import Exercise, WorkoutSession, ExerciseRecord, UserProfile
 
 
@@ -187,3 +188,38 @@ class QuickAddExerciseForm(forms.Form):
         choices=ExerciseRecord.DIFFICULTY_CHOICES,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+
+
+class CustomLoginForm(LoginForm):
+    """Custom login form with Bootstrap styling"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Apply Bootstrap classes to form fields
+        self.fields["login"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Enter your email"}
+        )
+        self.fields["password"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Enter your password"}
+        )
+        if "remember" in self.fields:
+            self.fields["remember"].widget.attrs.update({"class": "form-check-input"})
+
+
+class CustomSignupForm(SignupForm):
+    """Custom signup form with Bootstrap styling"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Apply Bootstrap classes to form fields
+        self.fields["email"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Enter your email"}
+        )
+        self.fields["password1"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Create a password"}
+        )
+        self.fields["password2"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Confirm your password"}
+        )
