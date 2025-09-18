@@ -83,10 +83,10 @@ This app aims to replace my current Apple Notes system with a more structured an
    python manage.py migrate
    ```
 
-5. **Create a superuser (optional)**
+5. **Create test users for development**
 
    ```bash
-   python manage.py createsuperuser
+   python manage.py create_test_users
    ```
 
 6. **Start the development server**
@@ -97,8 +97,16 @@ This app aims to replace my current Apple Notes system with a more structured an
 
 7. **Access the application**
    - Open your browser and go to `http://127.0.0.1:8000/`
-   - Create an account or login
-   - Start tracking your workouts!
+   - Login with one of the test accounts or create your own
+
+## Development Login
+
+For easy testing, the app comes with two pre-created test accounts:
+
+- **Alice**: `alice@example.com` / `some_pass`
+- **Bob**: `bob@example.com` / `some_pass`
+
+These accounts are set up as workout partners, so you can test the multi-user features.
 
 ## Features Implemented
 
@@ -129,3 +137,15 @@ The app follows Django best practices with:
 - HTMX for dynamic interactions without heavy JavaScript
 - Comprehensive forms with validation
 - Admin interface for data management
+
+### Management Commands
+
+- `python manage.py create_test_users` - Creates Alice and Bob test accounts for development
+- `python manage.py createsuperuser` - Create an admin user for the Django admin interface
+
+### Testing the App
+
+1. Run `python manage.py create_test_users` to create test accounts
+2. Start the server with `python manage.py runserver`
+3. Login with `alice@example.com` / `some_pass` or `bob@example.com` / `some_pass`
+4. Create workout sessions and add exercises to test the functionality
