@@ -25,19 +25,19 @@ jobs:
       - name: Backup database
         run: |
           # Create backup directory if it doesn't exist
-          sudo mkdir -p /srv/gymtracker/backups
+          sudo -u gymtracker mkdir -p /srv/gymtracker/backups
           # Backup current database if it exists
           if [ -f /srv/gymtracker/data/db.sqlite3 ]; then
-            sudo cp /srv/gymtracker/data/db.sqlite3 /srv/gymtracker/backups/db.sqlite3.backup.$(date +%Y%m%d_%H%M%S)
+            sudo -u gymtracker cp /srv/gymtracker/data/db.sqlite3 /srv/gymtracker/backups/db.sqlite3.backup.$(date +%Y%m%d_%H%M%S)
             echo "Database backed up"
           fi
 
       - name: Deploy files
         run: |
           # Create deployment directory if it doesn't exist
-          sudo mkdir -p /srv/gymtracker/app
+          sudo -u gymtracker mkdir -p /srv/gymtracker/app
           # Sync files excluding database and sensitive files
-          rsync -av --delete \
+          sudo -u gymtracker rsync -av --delete \
             --exclude='db.sqlite3' \
             --exclude='data/' \
             --exclude='.git' \
@@ -47,11 +47,6 @@ jobs:
             --exclude='venv' \
             --exclude='.venv' \
             . /srv/gymtracker/app/
-
-      - name: Set ownership and permissions
-        run: |
-          sudo chown -R gymtracker:gymtracker /srv/gymtracker/app
-          sudo chmod -R 755 /srv/gymtracker/app
 
       - name: Install dependencies
         run: |

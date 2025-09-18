@@ -223,6 +223,8 @@ SENTRY_RELEASE=1.0.0
 
 **Initial Server Setup:**
 
+> **Security Note**: The gymtracker user is created without sudo permissions for security. The setup script assumes `/srv/gymtracker` exists and is owned by the gymtracker user.
+
 1. **Run the setup script on your VPS**:
 
    ```bash
@@ -237,8 +239,8 @@ SENTRY_RELEASE=1.0.0
    ```bash
    # Copy and edit the environment file
    sudo cp env.example /home/gymtracker/.env
-   sudo nano /home/gymtracker/.env  # Edit with your production values
    sudo chown gymtracker:gymtracker /home/gymtracker/.env
+   sudo -u gymtracker nano /home/gymtracker/.env  # Edit with your production values
    ```
 
 **Automatic Deployment:**

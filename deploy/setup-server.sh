@@ -11,20 +11,16 @@ echo "🚀 Setting up Django Gym Tracker deployment environment..."
 if ! id "gymtracker" &>/dev/null; then
     echo "Creating gymtracker user..."
     sudo useradd -m -s /bin/bash gymtracker
-    sudo usermod -aG sudo gymtracker
 else
     echo "gymtracker user already exists"
 fi
 
-# Create deployment directories
+# Create deployment directories (assuming /srv/gymtracker exists and is owned by gymtracker)
 echo "Creating deployment directories..."
-sudo mkdir -p /srv/gymtracker/app
-sudo mkdir -p /srv/gymtracker/data
-sudo mkdir -p /srv/gymtracker/backups
-sudo mkdir -p /srv/gymtracker/logs
-
-# Set ownership
-sudo chown -R gymtracker:gymtracker /srv/gymtracker
+mkdir -p /srv/gymtracker/app
+mkdir -p /srv/gymtracker/data
+mkdir -p /srv/gymtracker/backups
+mkdir -p /srv/gymtracker/logs
 
 # Install uv for the gymtracker user
 echo "Installing uv for gymtracker user..."
@@ -36,10 +32,10 @@ echo "Enabling systemd user services..."
 sudo -u gymtracker systemctl --user daemon-reload
 sudo loginctl enable-linger gymtracker
 
-# Copy systemd service file
+# Copy systemd service file to user directory
 echo "Installing systemd service..."
-sudo cp deploy/gymtracker.service /home/gymtracker/.config/systemd/user/
-sudo chown gymtracker:gymtracker /home/gymtracker/.config/systemd/user/gymtracker.service
+sudo -u gymtracker mkdir -p /home/gymtracker/.config/systemd/user/
+sudo -u gymtracker cp deploy/gymtracker.service /home/gymtracker/.config/systemd/user/
 
 # Reload systemd and enable service
 sudo -u gymtracker systemctl --user daemon-reload
