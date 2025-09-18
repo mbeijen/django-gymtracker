@@ -1,0 +1,33 @@
+name: Django CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5.2"
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      - name: Run migrations
+        run: |
+          uv run python manage.py migrate
+
+      - name: Create test users
+        run: |
+          uv run python manage.py create_test_users
+
+      - name: Run tests with pytest
+        run: uv run pytest --tb=short
+
+      - name: Run Django system check
+        run: uv run python manage.py check

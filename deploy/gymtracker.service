@@ -1,0 +1,27 @@
+[Unit]
+Description=Django Gym Tracker Application
+After=network.target
+
+[Service]
+Type=simple
+User=gymtracker
+Group=gymtracker
+WorkingDirectory=/srv/gymtracker/app
+Environment=PATH=/srv/gymtracker/app/.venv/bin
+Environment=DATABASE_PATH=/srv/gymtracker/data/db.sqlite3
+ExecStart=/srv/gymtracker/app/.venv/bin/python manage.py runserver 0.0.0.0:8098
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gymtracker
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/gymtracker
+
+[Install]
+WantedBy=default.target

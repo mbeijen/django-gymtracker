@@ -221,38 +221,75 @@ SENTRY_RELEASE=1.0.0
 
 #### Deployment Steps
 
-1. **Copy environment configuration**:
+**Initial Server Setup:**
+
+1. **Run the setup script on your VPS**:
 
    ```bash
-   cp env.example ~/.env
-   nano ~/.env  # Edit with your production values
+   # On your VPS, clone the repository and run setup
+   git clone <your-repo-url> /tmp/gymtracker
+   cd /tmp/gymtracker
+   chmod +x deploy/setup-server.sh
+   sudo ./deploy/setup-server.sh
    ```
 
-2. **Install dependencies**:
+2. **Configure environment variables**:
+   ```bash
+   # Copy and edit the environment file
+   sudo cp env.example /home/gymtracker/.env
+   sudo nano /home/gymtracker/.env  # Edit with your production values
+   sudo chown gymtracker:gymtracker /home/gymtracker/.env
+   ```
+
+**Automatic Deployment:**
+
+The app uses GitHub Actions for automated deployment:
+
+1. **Push to main branch** - triggers automatic deployment
+2. **Manual deployment** - use "workflow_dispatch" in GitHub Actions
+
+**Manual Deployment (if needed):**
+
+1. **Stop the service**:
 
    ```bash
-   uv sync
+   sudo -u gymtracker systemctl --user stop gymtracker
    ```
 
-3. **Run migrations**:
+2. **Deploy files**:
 
    ```bash
-   uv run python manage.py migrate
+   rsync -av --delete --exclude='db.sqlite3' --exclude='data/' . /srv/gymtracker/app/
    ```
 
-4. **Collect static files**:
+3. **Install dependencies and run migrations**:
 
    ```bash
-   uv run python manage.py collectstatic --noinput
+   cd /srv/gymtracker/app
+   sudo -u gymtracker uv sync
+   sudo -u gymtracker uv run python manage.py migrate
+   sudo -u gymtracker uv run python manage.py collectstatic --noinput
    ```
 
-5. **Create superuser**:
-
+4. **Start the service**:
    ```bash
-   uv run python manage.py createsuperuser
+   sudo -u gymtracker systemctl --user start gymtracker
    ```
 
-6. **Deploy with your preferred WSGI server** (Gunicorn, uWSGI, etc.)
+**Service Management:**
+
+```bash
+# Check service status
+sudo -u gymtracker systemctl --user status gymtracker
+
+# Start/stop/restart service
+sudo -u gymtracker systemctl --user start gymtracker
+sudo -u gymtracker systemctl --user stop gymtracker
+sudo -u gymtracker systemctl --user restart gymtracker
+
+# View logs
+sudo -u gymtracker journalctl --user -u gymtracker -f
+```
 
 ### Management Commands
 
