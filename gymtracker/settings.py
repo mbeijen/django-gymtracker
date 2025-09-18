@@ -144,6 +144,9 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # For development
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+# Session configuration - remember users by default (2 weeks)
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+
 # Custom allauth forms
 ACCOUNT_FORMS = {
     "login": "workouts.forms.CustomLoginForm",

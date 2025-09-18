@@ -191,10 +191,14 @@ class QuickAddExerciseForm(forms.Form):
 
 
 class CustomLoginForm(LoginForm):
-    """Custom login form with Bootstrap styling"""
+    """Custom login form with Bootstrap styling and no remember me checkbox"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Remove the remember me field entirely
+        if "remember" in self.fields:
+            del self.fields["remember"]
 
         # Apply Bootstrap classes to form fields
         self.fields["login"].widget.attrs.update(
@@ -203,8 +207,6 @@ class CustomLoginForm(LoginForm):
         self.fields["password"].widget.attrs.update(
             {"class": "form-control", "placeholder": "Enter your password"}
         )
-        if "remember" in self.fields:
-            self.fields["remember"].widget.attrs.update({"class": "form-check-input"})
 
 
 class CustomSignupForm(SignupForm):
