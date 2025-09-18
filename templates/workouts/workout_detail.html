@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Workout - {{ workout.date }} - Gym Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1>Workout - {{ workout.date|date:"M d, Y" }}</h1>
+                <p class="text-muted mb-0">
+                    Started at {{ workout.start_time|time:"g:i A" }}
+                    {% if workout.end_time %} • Ended at {{ workout.end_time|time:"g:i A" }}{% endif %}
+                    {% if workout.duration %} • Duration: {{ workout.duration }}{% endif %}
+                </p>
+            </div>
+            <div>
+                {% if not workout.is_completed %}
+                    <span class="badge bg-warning fs-6">In Progress</span>
+                {% else %}
+                    <span class="badge bg-success fs-6">Completed</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Stats -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card">
+            <div class="stats-number">{{ exercise_records|length }}</div>
+            <div class="stats-label">Exercises</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card">
+            <div class="stats-number">{{ total_volume|floatformat:0 }}</div>
+            <div class="stats-label">Total Volume (kg)</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card">
+            <div class="stats-number">
+                {% if exercise_records %}
+                    {{ exercise_records|length|add:"-1"|add:"1" }}
+                {% else %}
+                    0
+                {% endif %}
+            </div>
+            <div class="stats-label">Sets Completed</div>
+        </div>
+    </div>
+</div>
+
+<!-- Exercise Records -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Exercises</h5>
+                {% if not workout.is_completed %}
+                    <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary btn-sm">
+                        Add Exercise
+                    </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if exercise_records %}
+                    <div class="list-group list-group-flush">
+                        {% for record in exercise_records %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ record.exercise.name }}</h6>
+                                        <p class="mb-1">
+                                            <strong>{{ record.weight_kg }}kg</strong> × {{ record.reps }} reps
+                                            {% if record.sets > 1 %} ({{ record.sets }} sets){% endif %}
+                                        </p>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge difficulty-{{ record.difficulty_rating }}">
+                                                Difficulty: {{ record.difficulty_rating }}/10
+                                            </span>
+                                            <small class="text-muted">
+                                                Volume: {{ record.total_volume|floatformat:0 }}kg
+                                            </small>
+                                        </div>
+                                        {% if record.notes %}
+                                            <small class="text-muted d-block mt-1">{{ record.notes }}</small>
+                                        {% endif %}
+                                    </div>
+                                    {% if not workout.is_completed %}
+                                        <div class="btn-group-vertical btn-group-sm">
+                                            <a href="{% url 'workouts:edit_exercise' workout.pk record.pk %}"
+                                               class="btn btn-outline-primary btn-sm">
+                                                Edit
+                                            </a>
+                                            <a href="{% url 'workouts:delete_exercise' workout.pk record.pk %}"
+                                               class="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('Are you sure you want to delete this exercise?')">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No exercises added yet.</p>
+                        {% if not workout.is_completed %}
+                            <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary">
+                                Add Your First Exercise
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workout Notes -->
+{% if workout.notes %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Workout Notes</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ workout.notes }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Action Buttons -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-grid gap-2 d-md-flex">
+            {% if not workout.is_completed %}
+                <a href="{% url 'workouts:complete_workout' workout.pk %}" class="btn btn-success">
+                    Complete Workout
+                </a>
+                <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary">
+                    Add Exercise
+                </a>
+            {% endif %}
+            <a href="{% url 'workouts:dashboard' %}" class="btn btn-outline-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
