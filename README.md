@@ -261,7 +261,7 @@ The app uses GitHub Actions for automated deployment:
 2. **Deploy files**:
 
    ```bash
-   rsync -av --delete --exclude='db.sqlite3' --exclude='data/' . /srv/gymtracker/app/
+   rsync -av --delete --exclude='db.sqlite3' --exclude='data/' --exclude='staticfiles/' . /srv/gymtracker/app/
    ```
 
 3. **Install dependencies and run migrations**:

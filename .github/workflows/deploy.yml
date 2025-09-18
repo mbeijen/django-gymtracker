@@ -43,6 +43,7 @@ jobs:
           rsync -av --delete \
             --exclude='db.sqlite3' \
             --exclude='data/' \
+            --exclude='staticfiles/' \
             --exclude='.git' \
             --exclude='__pycache__' \
             --exclude='*.pyc' \
