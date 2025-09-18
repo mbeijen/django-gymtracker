@@ -175,6 +175,85 @@ EMAIL_HOST_PASSWORD=your-app-password
 DEFAULT_FROM_EMAIL=your-email@gmail.com
 ```
 
+## Production Deployment
+
+### Error Tracking with Bugsink
+
+The app is configured to work with Bugsink (Sentry API compatible) for error tracking in production. Bugsink provides a self-hosted alternative to Sentry with full API compatibility.
+
+#### Setup Bugsink Error Tracking
+
+1. **Install and configure Bugsink** on your server
+2. **Add Bugsink DSN to your environment**:
+
+```bash
+# Add to your ~/.env file
+BUGSINK_DSN=https://your-bugsink-instance.com/api/your-project-id/store/
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=1.0.0
+SENTRY_TRACES_SAMPLE_RATE=0.1
+SENTRY_PROFILES_SAMPLE_RATE=0.1
+```
+
+#### Production Environment Variables
+
+For production deployment, configure these environment variables in your `~/.env` file:
+
+```env
+# Security
+SECRET_KEY=your-very-secure-secret-key-here
+DEBUG=False
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+# Email (configure with your provider)
+EMAIL_HOST=smtp.your-provider.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@yourdomain.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=your-email@yourdomain.com
+
+# Error tracking
+BUGSINK_DSN=https://your-bugsink-instance.com/api/your-project-id/store/
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=1.0.0
+```
+
+#### Deployment Steps
+
+1. **Copy environment configuration**:
+
+   ```bash
+   cp env.example ~/.env
+   nano ~/.env  # Edit with your production values
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   uv sync
+   ```
+
+3. **Run migrations**:
+
+   ```bash
+   uv run python manage.py migrate
+   ```
+
+4. **Collect static files**:
+
+   ```bash
+   uv run python manage.py collectstatic --noinput
+   ```
+
+5. **Create superuser**:
+
+   ```bash
+   uv run python manage.py createsuperuser
+   ```
+
+6. **Deploy with your preferred WSGI server** (Gunicorn, uWSGI, etc.)
+
 ### Management Commands
 
 - `uv run python manage.py create_test_users` - Creates Alice and Bob test accounts for development

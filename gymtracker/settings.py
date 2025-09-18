@@ -13,9 +13,36 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Load environment variables from .env file in user's home directory
 load_dotenv(os.path.expanduser("~/.env"))
+
+# Initialize Sentry if BUGSINK_DSN is provided
+BUGSINK_DSN = os.getenv("BUGSINK_DSN")
+if BUGSINK_DSN:
+    sentry_sdk.init(
+        dsn=BUGSINK_DSN,
+        integrations=[
+            DjangoIntegration(
+                transaction_style="url",
+                middleware_spans=True,
+                signals_spans=True,
+                cache_spans=True,
+            ),
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+        # Set profiles_sample_rate to 1.0 to profile 100% of sampled transactions
+        profiles_sample_rate=float(os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "0.1")),
+        # Set environment
+        environment=os.getenv("SENTRY_ENVIRONMENT", "development"),
+        # Set release
+        release=os.getenv("SENTRY_RELEASE"),
+        # Set user context
+        send_default_pii=False,  # Don't send personally identifiable information
+    )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
