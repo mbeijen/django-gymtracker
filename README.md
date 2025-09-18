@@ -52,8 +52,8 @@ This app aims to replace my current Apple Notes system with a more structured an
 
 ### Prerequisites
 
-- Python 3.8+
-- pip
+- Python 3.10+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended) or pip
 
 ### Installation
 
@@ -64,38 +64,39 @@ This app aims to replace my current Apple Notes system with a more structured an
    cd django-gymtracker
    ```
 
-2. **Create and activate virtual environment**
+2. **Install dependencies with uv (recommended)**
+
+   ```bash
+   uv sync
+   ```
+
+   Or with pip:
 
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -e .
    ```
 
-3. **Install dependencies**
+3. **Run migrations**
 
    ```bash
-   pip install -r requirements.txt
+   uv run python manage.py migrate
    ```
 
-4. **Run migrations**
+4. **Create test users for development**
 
    ```bash
-   python manage.py migrate
+   uv run python manage.py create_test_users
    ```
 
-5. **Create test users for development**
+5. **Start the development server**
 
    ```bash
-   python manage.py create_test_users
+   uv run python manage.py runserver
    ```
 
-6. **Start the development server**
-
-   ```bash
-   python manage.py runserver
-   ```
-
-7. **Access the application**
+6. **Access the application**
    - Open your browser and go to `http://127.0.0.1:8000/`
    - Login with one of the test accounts or create your own
 
@@ -137,15 +138,20 @@ The app follows Django best practices with:
 - HTMX for dynamic interactions without heavy JavaScript
 - Comprehensive forms with validation
 - Admin interface for data management
+- Modern Python packaging with `pyproject.toml`
+- Fast dependency management with `uv`
 
 ### Management Commands
 
-- `python manage.py create_test_users` - Creates Alice and Bob test accounts for development
-- `python manage.py createsuperuser` - Create an admin user for the Django admin interface
+- `uv run python manage.py create_test_users` - Creates Alice and Bob test accounts for development
+- `uv run python manage.py createsuperuser` - Create an admin user for the Django admin interface
+- `uv run pytest` - Run the test suite
+- `uv run python manage.py runserver` - Start the development server
 
 ### Testing the App
 
-1. Run `python manage.py create_test_users` to create test accounts
-2. Start the server with `python manage.py runserver`
+1. Run `uv run python manage.py create_test_users` to create test accounts
+2. Start the server with `uv run python manage.py runserver`
 3. Login with `alice@example.com` / `some_pass` or `bob@example.com` / `some_pass`
 4. Create workout sessions and add exercises to test the functionality
+5. Run `uv run pytest` to execute the test suite
