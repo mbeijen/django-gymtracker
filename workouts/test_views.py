@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils.formats import date_format
 from datetime import date, time
 from decimal import Decimal
 
@@ -58,7 +59,9 @@ class ViewTests(TestCase):
             reverse("workouts:workout_detail", kwargs={"pk": self.workout.pk})
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Sep 18, 2025")  # Check for formatted date
+        # Check for formatted date - workout was created with date.today()
+        expected_date = date_format(self.workout.date, "DATE_FORMAT")
+        self.assertContains(response, expected_date)
 
     def test_add_exercise_requires_login(self):
         response = self.client.get(
