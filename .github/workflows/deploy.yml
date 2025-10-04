@@ -17,9 +17,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v6
         with:
-          version: "0.5.2"
+          version: "latest"
 
       - name: Stop gymtracker service
         run: |
@@ -69,7 +69,9 @@ jobs:
 
       - name: Start gymtracker service
         run: |
-          systemctl --user start gymtracker
+          export XDG_RUNTIME_DIR=/run/user/$(id -u)
+          export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
+          systemctl --user restart gymtracker
 
       - name: Verify deployment
         run: |
