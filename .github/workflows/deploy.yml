@@ -77,6 +77,8 @@ jobs:
         run: |
           echo "✅ Deployment completed successfully"
           echo "Service status:"
+          export XDG_RUNTIME_DIR=/run/user/$(id -u)
+          export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
           systemctl --user status gymtracker --no-pager
           echo ""
           echo "Files in deployment directory:"
