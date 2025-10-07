@@ -83,12 +83,12 @@
                                 <div>
                                     <h6 class="mb-1">
                                         <a href="{% url 'workouts:workout_detail' workout.pk %}" class="text-decoration-none">
-                                            {{ workout.date|date:"M d, Y" }}
+                                            {{ workout.date|date }}
                                         </a>
                                     </h6>
                                     <small class="text-muted">
-                                        {{ workout.start_time|time:"g:i A" }}
-                                        {% if workout.end_time %} - {{ workout.end_time|time:"g:i A" }}{% endif %}
+                                        {{ workout.start_time|time }}
+                                        {% if workout.end_time %} - {{ workout.end_time|time }}{% endif %}
                                         • {{ workout.exercise_records.count }} exercises
                                         {% if workout.is_completed %}
                                             <span class="badge bg-success ms-2">Completed</span>
@@ -141,7 +141,7 @@
                                         Difficulty: {{ record.difficulty_rating }}/10
                                     </span>
                                     <small class="text-muted d-block mt-2">
-                                        {{ record.workout_session.date|date:"M d" }}
+                                        {{ record.workout_session.date|date }}
                                     </small>
                                 </div>
                             </div>

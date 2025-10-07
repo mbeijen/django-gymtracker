@@ -211,3 +211,16 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Date and time formatting
+USE_L10N = True
+USE_TZ = True
+TIME_ZONE = "Europe/Amsterdam"
+
+# Date/time format settings
+DATE_FORMAT = "l Y-m-d"  # Tuesday 2025-10-07
+TIME_FORMAT = "H:i"  # 24-hour format (19:18)
+DATETIME_FORMAT = "l Y-m-d H:i"  # Tuesday 2025-10-07 19:18
+
+# Duration formatting (for timedelta objects)
+DURATION_FORMAT = "H:MM"  # 2:37 instead of 2:37:45.888686
