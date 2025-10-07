@@ -57,13 +57,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
                 <h5 class="mb-0">Exercises</h5>
-                {% if not workout.is_completed %}
-                    <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary btn-sm">
-                        Add Exercise
-                    </a>
-                {% endif %}
             </div>
             <div class="card-body">
                 {% if exercise_records %}
@@ -109,17 +104,50 @@
                 {% else %}
                     <div class="text-center py-4">
                         <p class="text-muted">No exercises added yet.</p>
-                        {% if not workout.is_completed %}
-                            <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary">
-                                Add Your First Exercise
-                            </a>
-                        {% endif %}
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<!-- Available Exercises -->
+{% if not workout.is_completed and available_exercises %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Add Exercise</h5>
+                <small class="text-muted">Click on an exercise to add it to your workout</small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for exercise in available_exercises %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <a href="{% url 'workouts:add_exercise' workout.pk %}?exercise={{ exercise.id }}"
+                               class="card h-100 text-decoration-none exercise-card">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-1">{{ exercise.name }}</h6>
+                                    {% if exercise.muscle_groups %}
+                                        <p class="card-text text-muted small mb-1">{{ exercise.muscle_groups }}</p>
+                                    {% endif %}
+                                    {% if exercise.last_used %}
+                                        <small class="text-muted">
+                                            Last done: {{ exercise.last_used|timesince }} ago
+                                        </small>
+                                    {% else %}
+                                        <small class="text-muted">Never done before</small>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Workout Notes -->
 {% if workout.notes %}
@@ -144,9 +172,6 @@
             {% if not workout.is_completed %}
                 <a href="{% url 'workouts:complete_workout' workout.pk %}" class="btn btn-success">
                     Complete Workout
-                </a>
-                <a href="{% url 'workouts:add_exercise' workout.pk %}" class="btn btn-primary">
-                    Add Exercise
                 </a>
             {% endif %}
             <a href="{% url 'workouts:dashboard' %}" class="btn btn-outline-secondary">

@@ -96,10 +96,28 @@ class WorkoutSessionDetailView(LoginRequiredMixin, DetailView):
         # Calculate total volume
         total_volume = sum(record.total_volume for record in exercise_records)
 
+        # Get exercises already done in this workout
+        done_exercise_ids = set(exercise_records.values_list("exercise_id", flat=True))
+
+        # Get all exercises, excluding ones already done in this workout
+        available_exercises = Exercise.objects.exclude(id__in=done_exercise_ids)
+
+        # Sort by most recent usage (last time this exercise was done by this user)
+        # We'll annotate with the last usage date and sort by it
+        from django.db.models import Max, Q
+
+        available_exercises = available_exercises.annotate(
+            last_used=Max(
+                "exerciserecord__created_at",
+                filter=Q(exerciserecord__workout_session__user=self.request.user),
+            )
+        ).order_by("-last_used", "name")
+
         context.update(
             {
                 "exercise_records": exercise_records,
                 "total_volume": total_volume,
+                "available_exercises": available_exercises,
             }
         )
         return context
@@ -119,6 +137,20 @@ class AddExerciseToWorkoutView(LoginRequiredMixin, CreateView):
                 WorkoutSession, pk=kwargs["pk"], user=request.user
             )
         return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        # Pre-select exercise if provided in URL
+        exercise_id = self.request.GET.get("exercise")
+        if exercise_id:
+            try:
+                exercise = Exercise.objects.get(id=exercise_id)
+                kwargs["initial"] = {"exercise": exercise}
+            except Exercise.DoesNotExist:
+                pass
+
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

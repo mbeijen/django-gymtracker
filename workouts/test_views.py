@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.formats import date_format
-from datetime import date, time
+from datetime import date, time, timedelta
 from decimal import Decimal
 
 from .models import Exercise, WorkoutSession, ExerciseRecord
@@ -325,3 +325,102 @@ class AddExerciseToWorkoutViewTests(TestCase):
         self.assertEqual(recommendation["last_weight"], Decimal("80.0"))
         self.assertEqual(recommendation["last_difficulty"], 5)
         self.assertEqual(recommendation["recommended_weight"], Decimal("82.5"))
+
+
+class WorkoutDetailViewTests(TestCase):
+    """Test the WorkoutDetailView with smart exercise list functionality"""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="test@example.com", username="testuser", password="testpass123"
+        )
+        self.workout = WorkoutSession.objects.create(user=self.user, date=date.today())
+        self.exercise1 = Exercise.objects.create(
+            name="Bench Press", muscle_groups="Chest, Triceps"
+        )
+        self.exercise2 = Exercise.objects.create(name="Squat", muscle_groups="Legs")
+        self.exercise3 = Exercise.objects.create(
+            name="Deadlift", muscle_groups="Back, Legs"
+        )
+
+        # Create some historical records
+        old_workout = WorkoutSession.objects.create(
+            user=self.user, date=date.today() - timedelta(days=30)
+        )
+        ExerciseRecord.objects.create(
+            workout_session=old_workout,
+            exercise=self.exercise1,
+            weight_kg=Decimal("80.0"),
+            reps=10,
+            sets=3,
+            difficulty_rating=5,
+        )
+
+        recent_workout = WorkoutSession.objects.create(
+            user=self.user, date=date.today() - timedelta(days=1)
+        )
+        ExerciseRecord.objects.create(
+            workout_session=recent_workout,
+            exercise=self.exercise2,
+            weight_kg=Decimal("100.0"),
+            reps=8,
+            sets=3,
+            difficulty_rating=7,
+        )
+
+    def test_workout_detail_shows_available_exercises(self):
+        """Test that workout detail shows available exercises sorted by recency"""
+        self.client.login(email="test@example.com", password="testpass123")
+        response = self.client.get(
+            reverse("workouts:workout_detail", kwargs={"pk": self.workout.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("available_exercises", response.context)
+
+        available_exercises = response.context["available_exercises"]
+        # Should have all 3 exercises since none are done in current workout
+        self.assertEqual(len(available_exercises), 3)
+
+        # Should be sorted by last_used (most recent first)
+        # exercise2 was done 1 day ago, exercise1 was done 30 days ago, exercise3 never
+        self.assertEqual(available_exercises[0], self.exercise2)  # Most recent
+        self.assertEqual(available_exercises[1], self.exercise1)  # Older
+        self.assertEqual(available_exercises[2], self.exercise3)  # Never done
+
+    def test_workout_detail_excludes_done_exercises(self):
+        """Test that exercises already done in current workout are excluded"""
+        # Add an exercise to the current workout
+        ExerciseRecord.objects.create(
+            workout_session=self.workout,
+            exercise=self.exercise1,
+            weight_kg=Decimal("85.0"),
+            reps=10,
+            sets=3,
+            difficulty_rating=6,
+        )
+
+        self.client.login(email="test@example.com", password="testpass123")
+        response = self.client.get(
+            reverse("workouts:workout_detail", kwargs={"pk": self.workout.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        available_exercises = response.context["available_exercises"]
+        # Should only have 2 exercises (exercise1 is excluded)
+        self.assertEqual(len(available_exercises), 2)
+        self.assertNotIn(self.exercise1, available_exercises)
+        self.assertIn(self.exercise2, available_exercises)
+        self.assertIn(self.exercise3, available_exercises)
+
+    def test_add_exercise_with_preselected_exercise(self):
+        """Test that add exercise view pre-selects exercise from URL parameter"""
+        self.client.login(email="test@example.com", password="testpass123")
+        response = self.client.get(
+            reverse("workouts:add_exercise", kwargs={"pk": self.workout.pk})
+            + f"?exercise={self.exercise1.id}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the form has the exercise pre-selected
+        form = response.context["form"]
+        self.assertEqual(form.initial.get("exercise"), self.exercise1)
