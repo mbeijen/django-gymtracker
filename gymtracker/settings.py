@@ -60,6 +60,10 @@ DEBUG = True
 if allowed_hosts := os.getenv("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",")]
 
+# CSRF trusted origins for HTTPS domains
+if csrf_origins := os.getenv("CSRF_TRUSTED_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(",")]
+
 
 # Application definition
 

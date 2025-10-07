@@ -204,6 +204,7 @@ For production deployment, configure these environment variables in your `~/.env
 SECRET_KEY=your-very-secure-secret-key-here
 DEBUG=False
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 
 # Email (configure with your provider)
 EMAIL_HOST=smtp.your-provider.com
