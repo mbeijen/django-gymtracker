@@ -160,15 +160,22 @@ class AddExerciseToWorkoutView(LoginRequiredMixin, CreateView):
 
     def _get_recommended_weight(self, last_record):
         """Simple weight recommendation based on last difficulty"""
+        from decimal import Decimal
+
+        if not last_record or last_record.weight_kg is None:
+            return Decimal(
+                "0"
+            )  # Default weight if no previous record or weight is None
+
         if last_record.difficulty_rating <= 5:
             # Easy to moderate, increase weight by 2.5kg
-            return last_record.weight_kg + 2.5
+            return last_record.weight_kg + Decimal("2.5")
         elif last_record.difficulty_rating <= 7:
             # Hard, keep same weight
             return last_record.weight_kg
         else:
             # Very hard, decrease weight by 2.5kg
-            return max(0, last_record.weight_kg - 2.5)
+            return max(Decimal("0"), last_record.weight_kg - Decimal("2.5"))
 
 
 class EditExerciseRecordView(LoginRequiredMixin, UpdateView):
