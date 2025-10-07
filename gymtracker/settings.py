@@ -57,8 +57,10 @@ SECRET_KEY = "django-insecure-#s$cy)k&ldy6r^12mx*n=dh4oj6lth0bln@53v^2)ocp^9!&*(
 # set allowed hosts. If we don't have any we can turn on DEBUG
 if allowed_hosts := os.getenv("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",")]
+    DEBUG = False  # Production mode
 else:
-    DEBUG = True
+    ALLOWED_HOSTS = []
+    DEBUG = True  # Development mode
 
 # CSRF trusted origins for HTTPS domains
 if csrf_origins := os.getenv("CSRF_TRUSTED_ORIGINS"):
@@ -177,6 +179,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "none"  # For development
+ACCOUNT_SESSION_REMEMBER = None  # Remove remember me checkbox entirely
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"

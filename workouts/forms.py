@@ -208,6 +208,15 @@ class CustomLoginForm(LoginForm):
             {"class": "form-control", "placeholder": "Enter your password"}
         )
 
+    def clean(self):
+        """Override clean to handle missing remember field"""
+        cleaned_data = super().clean()
+        # Since we removed the remember field, we need to provide a default value
+        # when the parent form tries to access it
+        if "remember" not in cleaned_data:
+            cleaned_data["remember"] = True  # Default to remembering users
+        return cleaned_data
+
 
 class CustomSignupForm(SignupForm):
     """Custom signup form with Bootstrap styling"""

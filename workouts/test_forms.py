@@ -97,6 +97,11 @@ class UserProfileFormTest(TestCase):
 
 
 class CustomLoginFormTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="alice@example.com", username="alice", password="some_pass"
+        )
+
     def test_remember_field_removed(self):
         """Test that the remember field is removed from the login form"""
         form = CustomLoginForm()
@@ -122,6 +127,30 @@ class CustomLoginFormTest(TestCase):
             "Enter your password",
             form.fields["password"].widget.attrs.get("placeholder"),
         )
+
+    def test_login_via_form_post(self):
+        """Test that login works via actual form POST (catches remember field issues)"""
+        response = self.client.post(
+            "/accounts/login/",
+            {
+                "login": "alice@example.com",
+                "password": "some_pass",
+                # Note: no 'remember' field - this should work without it
+            },
+        )
+        # Should redirect on successful login
+        self.assertEqual(response.status_code, 302)
+        # User should be authenticated
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+
+    def test_login_form_displays(self):
+        """Test that the login form displays correctly"""
+        response = self.client.get("/accounts/login/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Enter your email")
+        self.assertContains(response, "Enter your password")
+        # Should not contain remember me checkbox
+        self.assertNotContains(response, "remember")
 
 
 class CustomSignupFormTest(TestCase):
