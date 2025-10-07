@@ -31,3 +31,9 @@ repos:
         additional_dependencies:
           - mdformat-frontmatter
         args: ["--wrap", "79"]
+
+  # djlint for Django template linting
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-django
