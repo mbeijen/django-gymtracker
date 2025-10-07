@@ -54,12 +54,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-#s$cy)k&ldy6r^12mx*n=dh4oj6lth0bln@53v^2)ocp^9!&*("
 
-# set allowed hosts. If we don't have any we can turn on DEBUG
+# Smart DEBUG setting: True for development (no ALLOWED_HOSTS), False for production
 if allowed_hosts := os.getenv("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",")]
     DEBUG = False  # Production mode
 else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = []  # Django default, but we need to define it for imports
     DEBUG = True  # Development mode
 
 # CSRF trusted origins for HTTPS domains
