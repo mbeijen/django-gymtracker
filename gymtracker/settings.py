@@ -59,7 +59,6 @@ if allowed_hosts := os.getenv("ALLOWED_HOSTS"):
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",")]
     DEBUG = False  # Production mode
 else:
-    ALLOWED_HOSTS = []  # Django default, but we need to define it for imports
     DEBUG = True  # Development mode
 
 # CSRF trusted origins for HTTPS domains
