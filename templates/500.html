@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Server Error - GymTracker{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center">
+                <div class="mb-4">
+                    <h1 class="display-1 text-danger">500</h1>
+                    <h2 class="h4 text-muted">Server Error</h2>
+                </div>
+
+                <div class="mb-4">
+                    <p class="lead">Oops! Something went wrong on our end.</p>
+                    <p class="text-muted">We're working to fix this issue. Please try again in a few moments.</p>
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>What you can do:</strong>
+                    <ul class="list-unstyled mt-2 mb-0">
+                        <li>• Refresh the page</li>
+                        <li>• Try again in a few minutes</li>
+                        <li>• Go back to the dashboard</li>
+                    </ul>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'workouts:dashboard' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-house-door me-2"></i>Go to Dashboard
+                    </a>
+                    <button onclick="window.location.reload()" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+                    </button>
+                </div>
+
+                <div class="mt-5">
+                    <small class="text-muted">
+                        If this problem persists, please contact support with details about what you were doing when this error occurred.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

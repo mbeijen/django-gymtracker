@@ -195,6 +195,17 @@ SENTRY_TRACES_SAMPLE_RATE=0.1
 SENTRY_PROFILES_SAMPLE_RATE=0.1
 ```
 
+#### Custom Error Pages
+
+The application includes custom error pages for a better user experience:
+
+- **404.html** - Page not found (with navigation back to dashboard)
+- **500.html** - Server error (with helpful instructions and retry options)
+- **403.html** - Access denied (with login prompt for unauthenticated users)
+- **400.html** - Bad request (with guidance for users)
+
+These pages are styled consistently with the rest of the application and provide helpful navigation options. In development mode (`DEBUG=True`), Django shows detailed error information. In production mode (`DEBUG=False`), users see these friendly error pages.
+
 #### Production Environment Variables
 
 For production deployment, configure these environment variables in your `~/.env` file:
