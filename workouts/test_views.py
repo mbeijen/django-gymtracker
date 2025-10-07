@@ -5,7 +5,7 @@ from django.utils.formats import date_format
 from datetime import date, time, timedelta
 from decimal import Decimal
 
-from .models import Exercise, WorkoutSession, ExerciseRecord
+from .models import Exercise, WorkoutSession, ExerciseRecord, UserProfile
 from .views import AddExerciseToWorkoutView
 
 User = get_user_model()
@@ -424,3 +424,77 @@ class WorkoutDetailViewTests(TestCase):
         # Check that the form has the exercise pre-selected
         form = response.context["form"]
         self.assertEqual(form.initial.get("exercise"), self.exercise1)
+
+
+class UserManagementTests(TestCase):
+    """Test user management functionality for superusers"""
+
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            email="admin@example.com", username="admin", password="adminpass123"
+        )
+        self.regular_user = User.objects.create_user(
+            email="user@example.com", username="user", password="userpass123"
+        )
+        # Create profiles
+        UserProfile.objects.create(user=self.superuser)
+        UserProfile.objects.create(user=self.regular_user)
+
+    def test_manage_users_requires_superuser(self):
+        """Test that manage users page requires superuser status"""
+        # Regular user should be redirected
+        self.client.login(email="user@example.com", password="userpass123")
+        response = self.client.get(reverse("workouts:manage_users"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_manage_users_allows_superuser(self):
+        """Test that superuser can access manage users page"""
+        self.client.login(email="admin@example.com", password="adminpass123")
+        response = self.client.get(reverse("workouts:manage_users"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("users", response.context)
+
+    def test_invite_user_creates_inactive_user(self):
+        """Test that inviting a user creates an inactive user account"""
+        self.client.login(email="admin@example.com", password="adminpass123")
+        response = self.client.post(
+            reverse("workouts:invite_user"), {"email": "newuser@example.com"}
+        )
+        self.assertEqual(response.status_code, 302)  # Redirect after success
+
+        # Check that user was created
+        new_user = User.objects.get(email="newuser@example.com")
+        self.assertFalse(new_user.is_active)
+        self.assertEqual(new_user.username, "newuser@example.com")
+
+        # Check that profile was created
+        self.assertTrue(hasattr(new_user, "profile"))
+
+    def test_toggle_superuser_status(self):
+        """Test toggling superuser status"""
+        self.client.login(email="admin@example.com", password="adminpass123")
+
+        # Make regular user a superuser
+        response = self.client.post(
+            reverse(
+                "workouts:toggle_superuser", kwargs={"user_id": self.regular_user.id}
+            )
+        )
+        self.assertEqual(response.status_code, 302)
+
+        self.regular_user.refresh_from_db()
+        self.assertTrue(self.regular_user.is_superuser)
+        self.assertTrue(self.regular_user.is_staff)
+
+    def test_cannot_toggle_own_superuser_status(self):
+        """Test that users cannot change their own superuser status"""
+        self.client.login(email="admin@example.com", password="adminpass123")
+
+        response = self.client.post(
+            reverse("workouts:toggle_superuser", kwargs={"user_id": self.superuser.id})
+        )
+        self.assertEqual(response.status_code, 302)
+
+        # Should still be superuser
+        self.superuser.refresh_from_db()
+        self.assertTrue(self.superuser.is_superuser)

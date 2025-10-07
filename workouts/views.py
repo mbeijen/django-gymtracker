@@ -1,6 +1,9 @@
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.conf import settings
 from django.views.generic import (
     ListView,
     DetailView,
@@ -315,3 +318,129 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         return profile
+
+
+class SuperUserRequiredMixin(UserPassesTestMixin):
+    """Mixin to require superuser status"""
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ManageUsersView(SuperUserRequiredMixin, ListView):
+    """Manage users page for superusers"""
+
+    model = get_user_model()
+    template_name = "workouts/manage_users.html"
+    context_object_name = "users"
+    paginate_by = 20
+
+    def get_queryset(self):
+        return get_user_model().objects.all().order_by("-date_joined")
+
+
+class InviteUserView(SuperUserRequiredMixin, CreateView):
+    """Invite a new user"""
+
+    model = get_user_model()
+    fields = ["email"]
+    template_name = "workouts/invite_user.html"
+    success_url = reverse_lazy("workouts:manage_users")
+
+    def form_valid(self, form):
+        email = form.cleaned_data["email"]
+
+        # Check if user already exists
+        if get_user_model().objects.filter(email=email).exists():
+            messages.error(self.request, f"User with email {email} already exists.")
+            return redirect("workouts:manage_users")
+
+        # Create user account (they'll need to set password via email)
+        user = form.save(commit=False)
+        user.username = email  # Use email as username
+        user.is_active = False  # User needs to activate via email
+        user.save()
+
+        # Create user profile
+        UserProfile.objects.create(user=user)
+
+        # Send invitation email
+        try:
+            send_mail(
+                subject="Invitation to Gym Tracker",
+                message=f"""
+Hello!
+
+You have been invited to join Gym Tracker. Please click the link below to set up your account:
+
+{settings.SITE_URL}/accounts/signup/?email={email}
+
+If you have any questions, please contact the administrator.
+
+Best regards,
+Gym Tracker Team
+                """.strip(),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            messages.success(self.request, f"Invitation sent to {email}")
+        except Exception as e:
+            messages.error(self.request, f"Failed to send invitation: {str(e)}")
+
+        return redirect("workouts:manage_users")
+
+
+class ResendInviteView(SuperUserRequiredMixin, TemplateView):
+    """Resend invitation to a user"""
+
+    def post(self, request, *args, **kwargs):
+        user_id = kwargs.get("user_id")
+        user = get_object_or_404(get_user_model(), id=user_id)
+
+        try:
+            send_mail(
+                subject="Gym Tracker - Account Setup Reminder",
+                message=f"""
+Hello!
+
+This is a reminder that you have an account on Gym Tracker. Please click the link below to set up your account:
+
+{settings.SITE_URL}/accounts/signup/?email={user.email}
+
+If you have any questions, please contact the administrator.
+
+Best regards,
+Gym Tracker Team
+                """.strip(),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            messages.success(self.request, f"Invitation resent to {user.email}")
+        except Exception as e:
+            messages.error(self.request, f"Failed to resend invitation: {str(e)}")
+
+        return redirect("workouts:manage_users")
+
+
+class ToggleSuperuserView(SuperUserRequiredMixin, TemplateView):
+    """Toggle superuser status for a user"""
+
+    def post(self, request, *args, **kwargs):
+        user_id = kwargs.get("user_id")
+        user = get_object_or_404(get_user_model(), id=user_id)
+
+        # Don't allow removing superuser status from self
+        if user == request.user:
+            messages.error(self.request, "You cannot change your own superuser status.")
+            return redirect("workouts:manage_users")
+
+        user.is_superuser = not user.is_superuser
+        user.is_staff = user.is_superuser  # Staff status follows superuser status
+        user.save()
+
+        status = "granted" if user.is_superuser else "removed"
+        messages.success(self.request, f"Superuser status {status} for {user.email}")
+
+        return redirect("workouts:manage_users")

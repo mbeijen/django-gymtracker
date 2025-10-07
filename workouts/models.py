@@ -99,6 +99,11 @@ class UserProfile(models.Model):
     """Extended user profile for gym tracker specific settings"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Your display name (leave blank to use email)",
+    )
     preferred_units = models.CharField(
         max_length=10, choices=[("kg", "Kilograms"), ("lbs", "Pounds")], default="kg"
     )
@@ -115,3 +120,8 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+    @property
+    def display_name(self):
+        """Get the user's display name, falling back to email if no name is set"""
+        return self.name.strip() if self.name and self.name.strip() else self.user.email

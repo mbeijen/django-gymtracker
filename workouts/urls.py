@@ -37,4 +37,17 @@ urlpatterns = [
     path("exercises/add/", views.AddExerciseView.as_view(), name="add_exercise_type"),
     path("history/", views.WorkoutHistoryView.as_view(), name="workout_history"),
     path("profile/", views.UserProfileView.as_view(), name="user_profile"),
+    # Admin-only user management
+    path("manage-users/", views.ManageUsersView.as_view(), name="manage_users"),
+    path("invite-user/", views.InviteUserView.as_view(), name="invite_user"),
+    path(
+        "resend-invite/<int:user_id>/",
+        views.ResendInviteView.as_view(),
+        name="resend_invite",
+    ),
+    path(
+        "toggle-superuser/<int:user_id>/",
+        views.ToggleSuperuserView.as_view(),
+        name="toggle_superuser",
+    ),
 ]

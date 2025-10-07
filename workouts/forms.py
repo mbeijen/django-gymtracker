@@ -128,12 +128,19 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ["preferred_units", "default_workout_partner"]
+        fields = ["name", "preferred_units", "default_workout_partner"]
         widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Enter your display name",
+                }
+            ),
             "preferred_units": forms.Select(attrs={"class": "form-control"}),
             "default_workout_partner": forms.Select(attrs={"class": "form-control"}),
         }
         labels = {
+            "name": "Display Name",
             "preferred_units": "Preferred Units",
             "default_workout_partner": "Default Workout Partner",
         }

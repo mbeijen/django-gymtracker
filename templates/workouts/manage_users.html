@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users - Gym Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Manage Users</h1>
+            <a href="{% url 'workouts:invite_user' %}" class="btn btn-primary">
+                <i class="bi bi-person-plus"></i> Invite User
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Users List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">All Users</h5>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ user.email }}</strong>
+                                            {% if user.is_superuser %}
+                                                <span class="badge bg-danger ms-2">Superuser</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.profile.display_name }}</td>
+                                        <td>
+                                            {% if user.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.date_joined|date }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                {% if not user.is_active %}
+                                                    <form method="post" action="{% url 'workouts:resend_invite' user.id %}" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-outline-primary btn-sm"
+                                                                onclick="return confirm('Resend invitation to {{ user.email }}?')">
+                                                            Resend Invite
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+
+                                                {% if user != request.user %}
+                                                    <form method="post" action="{% url 'workouts:toggle_superuser' user.id %}" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-outline-{% if user.is_superuser %}danger{% else %}success{% endif %} btn-sm"
+                                                                onclick="return confirm('{% if user.is_superuser %}Remove{% else %}Grant{% endif %} superuser status for {{ user.email }}?')">
+                                                            {% if user.is_superuser %}Remove Admin{% else %}Make Admin{% endif %}
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <h3 class="text-muted">No users found</h3>
+                        <p class="text-muted">Start by inviting your first user.</p>
+                        <a href="{% url 'workouts:invite_user' %}" class="btn btn-primary">
+                            Invite User
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+    <nav aria-label="Users pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+
+<!-- Back to Dashboard -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'workouts:dashboard' %}" class="btn btn-outline-secondary">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

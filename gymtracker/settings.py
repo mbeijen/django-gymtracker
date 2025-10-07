@@ -224,3 +224,6 @@ DATETIME_FORMAT = "l Y-m-d H:i"  # Tuesday 2025-10-07 19:18
 
 # Duration formatting (for timedelta objects)
 DURATION_FORMAT = "H:MM"  # 2:37 instead of 2:37:45.888686
+
+# Site URL for email invitations
+SITE_URL = os.getenv("SITE_URL", "http://localhost:8098")

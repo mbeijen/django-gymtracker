@@ -194,11 +194,15 @@
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        {{ user.email }}
+                        {{ user.profile.display_name }}
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'workouts:user_profile' %}">Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'workouts:workout_history' %}">History</a></li>
+                        {% if user.is_superuser %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'workouts:manage_users' %}">Manage Users</a></li>
+                        {% endif %}
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
                     </ul>
