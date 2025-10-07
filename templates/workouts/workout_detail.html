@@ -70,7 +70,7 @@
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1">{{ record.exercise.name }}</h6>
                                         <p class="mb-1">
-                                            <strong>{{ record.weight_kg }}kg</strong> × {{ record.reps }} reps
+                                            <strong>{{ record.weight_kg|weight_format }}kg</strong> × {{ record.reps }} reps
                                             {% if record.sets > 1 %} ({{ record.sets }} sets){% endif %}
                                         </p>
                                         <div class="d-flex align-items-center gap-2">

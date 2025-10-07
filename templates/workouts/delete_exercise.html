@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load duration_filters %}
 
 {% block title %}Delete Exercise - Gym Tracker{% endblock %}
 
@@ -14,7 +15,7 @@
                     <h5>Are you sure you want to delete this exercise?</h5>
                     <p class="mb-0">
                         <strong>{{ object.exercise.name }}</strong><br>
-                        {{ object.weight_kg }}kg × {{ object.reps }} reps
+                        {{ object.weight_kg|weight_format }}kg × {{ object.reps }} reps
                         {% if object.sets > 1 %} ({{ object.sets }} sets){% endif %}<br>
                         Difficulty: {{ object.difficulty_rating }}/10
                     </p>
