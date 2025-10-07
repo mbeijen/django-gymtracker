@@ -1,61 +1,48 @@
 {% extends 'base.html' %}
-
 {% block title %}Complete Workout - Gym Tracker{% endblock %}
-
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">Complete Workout</h4>
-                <small class="text-muted">{{ object.date|date:"M d, Y" }} at {{ object.start_time|time:"g:i A" }}</small>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-
-                    <div class="mb-3">
-                        <label for="{{ form.end_time.id_for_label }}" class="form-label">End Time</label>
-                        {{ form.end_time }}
-                        {% if form.end_time.errors %}
-                            <div class="text-danger">
-                                {% for error in form.end_time.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <small class="form-text text-muted">Leave blank to use current time</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="{{ form.notes.id_for_label }}" class="form-label">Workout Notes</label>
-                        {{ form.notes }}
-                        {% if form.notes.errors %}
-                            <div class="text-danger">
-                                {% for error in form.notes.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            Complete Workout
-                        </button>
-                        <a href="{% url 'workouts:workout_detail' object.pk %}" class="btn btn-outline-secondary">
-                            Back to Workout
-                        </a>
-                    </div>
-                </form>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Complete Workout</h4>
+                    <small class="text-muted">{{ object.date|date:"M d, Y" }} at {{ object.start_time|time:"g:i A" }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.end_time.id_for_label }}" class="form-label">End Time</label>
+                            {{ form.end_time }}
+                            {% if form.end_time.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.end_time.errors %}<small>{{ error }}</small>{% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Leave blank to use current time</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">Workout Notes</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.notes.errors %}<small>{{ error }}</small>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Complete Workout</button>
+                            <a href="{% url 'workouts:workout_detail' object.pk %}"
+                               class="btn btn-outline-secondary">Back to Workout</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
-
 {% block extra_js %}
-<script>
+    <script>
     // Set default end time to current time
     document.addEventListener('DOMContentLoaded', function() {
         const endTimeInput = document.getElementById('{{ form.end_time.id_for_label }}');
@@ -65,5 +52,5 @@
             endTimeInput.value = timeString;
         }
     });
-</script>
+    </script>
 {% endblock %}

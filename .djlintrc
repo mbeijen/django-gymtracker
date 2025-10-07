@@ -1,13 +1,4 @@
 {
   "profile": "django",
-  "indent": 4,
-  "max_line_length": 120,
-  "max_attribute_length": 120,
-  "format_attribute_template_tags": false,
-  "format_css": false,
-  "format_js": false,
-  "preserve_blank_lines": true,
-  "preserve_leading_space": true,
-  "custom_blocks": "javascript,style",
-  "ignore": "H006,H030,H031,H025,H020,H021,H022,H023,H024,H026,H027,H028,H029,T002,T003,H014,H019"
+  "ignore": "T002,T003,H014,H019,H021,H030,H031"
 }

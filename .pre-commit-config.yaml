@@ -32,8 +32,10 @@ repos:
           - mdformat-frontmatter
         args: ["--wrap", "79"]
 
-  # djlint for Django template linting
+  # djlint for Django template linting and formatting
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.36.4
     hooks:
+      - id: djlint-reformat-django
+        args: [--reformat]
       - id: djlint-django

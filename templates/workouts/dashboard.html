@@ -1,156 +1,135 @@
 {% extends 'base.html' %}
-
 {% block title %}Dashboard - Gym Tracker{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h1 class="mb-4">Welcome back, {{ user.profile.display_name }}! 💪</h1>
-    </div>
-</div>
-
-<!-- Quick Stats -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-3">
-        <div class="card stats-card">
-            <div class="stats-number">{{ recent_workouts_count }}</div>
-            <div class="stats-label">Workouts (30 days)</div>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Welcome back, {{ user.profile.display_name }}! 💪</h1>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card stats-card">
-            <div class="stats-number">{{ recent_workouts|length }}</div>
-            <div class="stats-label">Recent Sessions</div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-3">
-        <div class="card stats-card">
-            <div class="stats-number">
-                {% if today_workout %}
-                    ✅
-                {% else %}
-                    ❌
-                {% endif %}
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ recent_workouts_count }}</div>
+                <div class="stats-label">Workouts (30 days)</div>
             </div>
-            <div class="stats-label">Today's Workout</div>
         </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Quick Actions</h5>
-                <div class="d-grid gap-2 d-md-flex">
-                    {% if today_workout and not today_workout.is_completed %}
-                        <a href="{% url 'workouts:workout_detail' today_workout.pk %}" class="btn btn-primary">
-                            Continue Today's Workout
-                        </a>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card">
+                <div class="stats-number">{{ recent_workouts|length }}</div>
+                <div class="stats-label">Recent Sessions</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card">
+                <div class="stats-number">
+                    {% if today_workout %}
+                        ✅
                     {% else %}
-                        <a href="{% url 'workouts:create_workout' %}" class="btn btn-primary">
-                            Start New Workout
-                        </a>
+                        ❌
                     {% endif %}
-                    <a href="{% url 'workouts:exercise_list' %}" class="btn btn-outline-primary">
-                        Manage Exercises
-                    </a>
-                    <a href="{% url 'workouts:workout_history' %}" class="btn btn-outline-secondary">
-                        View History
-                    </a>
+                </div>
+                <div class="stats-label">Today's Workout</div>
+            </div>
+        </div>
+    </div>
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="d-grid gap-2 d-md-flex">
+                        {% if today_workout and not today_workout.is_completed %}
+                            <a href="{% url 'workouts:workout_detail' today_workout.pk %}"
+                               class="btn btn-primary">Continue Today's Workout</a>
+                        {% else %}
+                            <a href="{% url 'workouts:create_workout' %}" class="btn btn-primary">Start New Workout</a>
+                        {% endif %}
+                        <a href="{% url 'workouts:exercise_list' %}"
+                           class="btn btn-outline-primary">Manage Exercises</a>
+                        <a href="{% url 'workouts:workout_history' %}"
+                           class="btn btn-outline-secondary">View History</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Recent Workouts -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Recent Workouts</h5>
-                <a href="{% url 'workouts:workout_history' %}" class="btn btn-sm btn-outline-primary">
-                    View All
-                </a>
-            </div>
-            <div class="card-body">
-                {% if recent_workouts %}
-                    <div class="list-group list-group-flush">
-                        {% for workout in recent_workouts %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">
-                                        <a href="{% url 'workouts:workout_detail' workout.pk %}" class="text-decoration-none">
-                                            {{ workout.date|date }}
-                                        </a>
-                                    </h6>
-                                    <small class="text-muted">
-                                        {{ workout.start_time|time }}
-                                        {% if workout.end_time %} - {{ workout.end_time|time }}{% endif %}
-                                        • {{ workout.exercise_records.count }} exercises
-                                        {% if workout.is_completed %}
-                                            <span class="badge bg-success ms-2">Completed</span>
-                                        {% else %}
-                                            <span class="badge bg-warning ms-2">In Progress</span>
-                                        {% endif %}
-                                    </small>
+    <!-- Recent Workouts -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Workouts</h5>
+                    <a href="{% url 'workouts:workout_history' %}"
+                       class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_workouts %}
+                        <div class="list-group list-group-flush">
+                            {% for workout in recent_workouts %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">
+                                            <a href="{% url 'workouts:workout_detail' workout.pk %}"
+                                               class="text-decoration-none">{{ workout.date|date }}</a>
+                                        </h6>
+                                        <small class="text-muted">
+                                            {{ workout.start_time|time }}
+                                            {% if workout.end_time %}- {{ workout.end_time|time }}{% endif %}
+                                            • {{ workout.exercise_records.count }} exercises
+                                            {% if workout.is_completed %}
+                                                <span class="badge bg-success ms-2">Completed</span>
+                                            {% else %}
+                                                <span class="badge bg-warning ms-2">In Progress</span>
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <div class="text-end">
+                                        {% if workout.duration %}<small class="text-muted">{{ workout.duration }}</small>{% endif %}
+                                    </div>
                                 </div>
-                                <div class="text-end">
-                                    {% if workout.duration %}
-                                        <small class="text-muted">{{ workout.duration }}</small>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <p class="text-muted">No workouts yet. Start your first workout!</p>
-                        <a href="{% url 'workouts:create_workout' %}" class="btn btn-primary">
-                            Start Your First Workout
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Exercise Performance -->
-{% if recent_exercises %}
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Recent Exercise Performance</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for record in recent_exercises|slice:":6" %}
-                        <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card exercise-card h-100">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ record.exercise.name }}</h6>
-                                    <p class="card-text">
-                                        <strong>{{ record.weight_kg|weight_format }}kg</strong> × {{ record.reps }} reps
-                                        {% if record.sets > 1 %} ({{ record.sets }} sets){% endif %}
-                                    </p>
-                                    <span class="badge difficulty-{{ record.difficulty_rating }}">
-                                        Difficulty: {{ record.difficulty_rating }}/10
-                                    </span>
-                                    <small class="text-muted d-block mt-2">
-                                        {{ record.workout_session.date|date }}
-                                    </small>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">No workouts yet. Start your first workout!</p>
+                            <a href="{% url 'workouts:create_workout' %}" class="btn btn-primary">Start Your First Workout</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endif %}
+    <!-- Recent Exercise Performance -->
+    {% if recent_exercises %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Exercise Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for record in recent_exercises|slice:":6" %}
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card exercise-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ record.exercise.name }}</h6>
+                                            <p class="card-text">
+                                                <strong>{{ record.weight_kg|weight_format }}kg</strong> × {{ record.reps }} reps
+                                                {% if record.sets > 1 %}({{ record.sets }} sets){% endif %}
+                                            </p>
+                                            <span class="badge difficulty-{{ record.difficulty_rating }}">Difficulty: {{ record.difficulty_rating }}/10</span>
+                                            <small class="text-muted d-block mt-2">{{ record.workout_session.date|date }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

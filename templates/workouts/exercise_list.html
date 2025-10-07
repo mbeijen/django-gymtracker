@@ -1,78 +1,64 @@
 {% extends 'base.html' %}
-
 {% block title %}Exercises - Gym Tracker{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Exercises</h1>
-            <a href="{% url 'workouts:add_exercise_type' %}" class="btn btn-primary">
-                Add New Exercise
-            </a>
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Exercises</h1>
+                <a href="{% url 'workouts:add_exercise_type' %}" class="btn btn-primary">Add New Exercise</a>
+            </div>
         </div>
     </div>
-</div>
-
-<div class="row">
-    {% for exercise in exercises %}
-        <div class="col-md-6 col-lg-4 mb-3">
-            <div class="card exercise-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ exercise.name }}</h5>
-                    {% if exercise.muscle_groups %}
-                        <p class="card-text">
-                            <small class="text-muted">
-                                <strong>Muscles:</strong> {{ exercise.muscle_groups }}
-                            </small>
-                        </p>
-                    {% endif %}
-                    {% if exercise.description %}
-                        <p class="card-text">{{ exercise.description }}</p>
-                    {% endif %}
+    <div class="row">
+        {% for exercise in exercises %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card exercise-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ exercise.name }}</h5>
+                        {% if exercise.muscle_groups %}
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <strong>Muscles:</strong> {{ exercise.muscle_groups }}
+                                </small>
+                            </p>
+                        {% endif %}
+                        {% if exercise.description %}<p class="card-text">{{ exercise.description }}</p>{% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-    {% empty %}
-        <div class="col-12">
-            <div class="text-center py-5">
-                <h3 class="text-muted">No exercises yet</h3>
-                <p class="text-muted">Add your first exercise to get started!</p>
-                <a href="{% url 'workouts:add_exercise_type' %}" class="btn btn-primary">
-                    Add Exercise
-                </a>
+        {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <h3 class="text-muted">No exercises yet</h3>
+                    <p class="text-muted">Add your first exercise to get started!</p>
+                    <a href="{% url 'workouts:add_exercise_type' %}" class="btn btn-primary">Add Exercise</a>
+                </div>
             </div>
-        </div>
-    {% endfor %}
-</div>
-
-{% if is_paginated %}
-    <nav aria-label="Exercise pagination">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">First</a>
+        {% endfor %}
+    </div>
+    {% if is_paginated %}
+        <nav aria-label="Exercise pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
                 </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-            </li>
-
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-{% endif %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 {% endblock %}
