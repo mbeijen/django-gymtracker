@@ -3,7 +3,14 @@ from django.contrib.auth import get_user_model
 from datetime import date
 
 from .models import Exercise, UserProfile
-from .forms import WorkoutSessionForm, ExerciseRecordForm, ExerciseForm, UserProfileForm
+from .forms import (
+    WorkoutSessionForm,
+    ExerciseRecordForm,
+    ExerciseForm,
+    UserProfileForm,
+    CustomLoginForm,
+    CustomSignupForm,
+)
 
 User = get_user_model()
 
@@ -87,3 +94,61 @@ class UserProfileFormTest(TestCase):
         profile = UserProfile.objects.create(user=self.user)
         form = UserProfileForm(instance=profile)
         self.assertNotIn(self.user, form.fields["default_workout_partner"].queryset)
+
+
+class CustomLoginFormTest(TestCase):
+    def test_remember_field_removed(self):
+        """Test that the remember field is removed from the login form"""
+        form = CustomLoginForm()
+        self.assertNotIn("remember", form.fields)
+
+    def test_bootstrap_classes_applied(self):
+        """Test that Bootstrap classes are applied to form fields"""
+        form = CustomLoginForm()
+        self.assertIn(
+            "form-control", form.fields["login"].widget.attrs.get("class", "")
+        )
+        self.assertIn(
+            "form-control", form.fields["password"].widget.attrs.get("class", "")
+        )
+
+    def test_placeholders_set(self):
+        """Test that placeholders are set for form fields"""
+        form = CustomLoginForm()
+        self.assertEqual(
+            "Enter your email", form.fields["login"].widget.attrs.get("placeholder")
+        )
+        self.assertEqual(
+            "Enter your password",
+            form.fields["password"].widget.attrs.get("placeholder"),
+        )
+
+
+class CustomSignupFormTest(TestCase):
+    def test_bootstrap_classes_applied(self):
+        """Test that Bootstrap classes are applied to signup form fields"""
+        form = CustomSignupForm()
+        self.assertIn(
+            "form-control", form.fields["email"].widget.attrs.get("class", "")
+        )
+        self.assertIn(
+            "form-control", form.fields["password1"].widget.attrs.get("class", "")
+        )
+        self.assertIn(
+            "form-control", form.fields["password2"].widget.attrs.get("class", "")
+        )
+
+    def test_placeholders_set(self):
+        """Test that placeholders are set for signup form fields"""
+        form = CustomSignupForm()
+        self.assertEqual(
+            "Enter your email", form.fields["email"].widget.attrs.get("placeholder")
+        )
+        self.assertEqual(
+            "Create a password",
+            form.fields["password1"].widget.attrs.get("placeholder"),
+        )
+        self.assertEqual(
+            "Confirm your password",
+            form.fields["password2"].widget.attrs.get("placeholder"),
+        )
