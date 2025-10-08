@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Access Denied - GymTracker{% endblock %}
+{% block title %}
+    Access Denied - GymTracker
+{% endblock content %}
 {% block content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -24,10 +26,9 @@
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Log In
                             </a>
                         {% endif %}
-                        <a href="javascript:history.back()"
-                           class="btn btn-outline-secondary btn-lg">
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
                             <i class="bi bi-arrow-left me-2"></i>Go Back
-                        </a>
+                        </button>
                     </div>
                     <div class="mt-5">
                         <small class="text-muted">If you believe you should have access to this page, please contact support.</small>
@@ -36,4 +37,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

@@ -1,6 +1,8 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load duration_filters %}
-{% block title %}Workout History - Gym Tracker{% endblock %}
+{% block title %}
+    Workout History - Gym Tracker
+{% endblock content %}
 {% block content %}
     <div class="row">
         <div class="col-12">
@@ -127,4 +129,4 @@
             </ul>
         </nav>
     {% endif %}
-{% endblock %}
+{% endblock content %}

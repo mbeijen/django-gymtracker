@@ -1,6 +1,8 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load duration_filters %}
-{% block title %}Workout - {{ workout.date }} - Gym Tracker{% endblock %}
+{% block title %}
+    Workout - {{ workout.date }} - Gym Tracker
+{% endblock content %}
 {% block content %}
     <div class="row">
         <div class="col-12">
@@ -160,4 +162,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
